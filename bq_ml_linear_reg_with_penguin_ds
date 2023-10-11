@@ -1,0 +1,56 @@
+--from the link: https://cloud.google.com/bigquery/docs/linear-regression-tutorial
+
+create or replace model `bqml_tutorial.penguins_model`
+options(
+  model_type ='linear_reg',
+  input_label_cols = ['body_mass_g']
+)
+as
+SELECT
+  *
+FROM
+  `bigquery-public-data.ml_datasets.penguins`
+WHERE
+  body_mass_g IS NOT NULL;
+
+-- in addition to creating the model the above also trains the model you create
+
+-- A linear regression is a type of regression model that generates a continuous value from a linear combination of input features
+
+-- evaluate the model 
+
+select * from 
+ML.EVALUATE(MODEL `bqml_tutorial.penguins_model`, (
+  select * from 
+  `bigquery-public-data.ml_datasets.penguins` where body_mass_g is not null));
+
+  SELECT
+  *
+FROM
+  ML.EVALUATE(MODEL `bqml_tutorial.penguins_model`);
+
+  --now use model to predict outcomes
+
+select * from 
+ML.PREDICT(MODEL `bqml_tutorial.penguins_model`,
+(
+  select * from `bigquery-public-data.ml_datasets.penguins`
+where body_mass_g is not null and island ='Biscoe'
+));
+
+--explain the model
+SELECT
+  *
+FROM
+  ML.EXPLAIN_PREDICT(MODEL `bqml_tutorial.penguins_model`,
+    (
+    SELECT
+      *
+    FROM
+      `bigquery-public-data.ml_datasets.penguins`
+    WHERE
+      body_mass_g IS NOT NULL
+      AND island = "Biscoe"),
+    STRUCT(3 as top_k_features));
+
+    
