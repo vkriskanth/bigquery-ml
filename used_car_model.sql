@@ -51,3 +51,8 @@ SELECT
 FROM
   ML.GLOBAL_EXPLAIN(MODEL `bqml_tutorial.used_car_model`);
 
+/*
+impression of the results via bq-ml:
+r2square value is : 0.93636212275447894
+*/
+
